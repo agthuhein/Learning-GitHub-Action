@@ -86,24 +86,20 @@ jobs:
   staging:
     name: STAGE DEPLOYMENT
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.head_ref == 'dev'
-    environment:
-      name: STAGING
     steps:
       - name: Referring Environment Variables
         run: |
           echo "[INFO] Running deployment on ${{ vars.HOST }} using ${{ vars.USER }}."
-
       - name: Referring Environment Secrets
         run: |
           echo "[INFO] Password for ${{ vars.USER }} is ${{ secrets.PASSWORD }}."
+    environment:
+      name: STAGING
+    if: github.ref == 'refs/heads/dev'
 
   production:
     name: production DEPLOYMENT
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    environment:
-      name: PRODUCTION
     steps:
       - name: Referring Environment Variables
         run: |
@@ -112,3 +108,6 @@ jobs:
       - name: Referring Environment Secrets
         run: |
           echo "[INFO] Password for ${{ vars.USER }} is ${{ secrets.PASSWORD }}."
+    environment:
+      name: PRODUCTION
+    if: github.ref == 'refs/heads/main'
