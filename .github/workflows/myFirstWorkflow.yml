@@ -1,48 +1,58 @@
 name: my-First-Workflow
+
 on:
   schedule:
     - cron: "*/5 * * * *"
   workflow_dispatch:
   push:
-  
+
 jobs:
   job1:
     name: JOB1
     runs-on: ubuntu-latest
     steps:
       - name: Running Single Command in Job1
-        run: echo "Hi this is my first github workflow"
-      - name: Checking os relaease for github hosted runner
+        run: echo "Hi this is my first GitHub workflow"
+
+      - name: Checking OS release for GitHub-hosted runner
         run: cat /etc/os-release
+
       - name: Calling sleep
         run: sleep 20
+
   job2:
     name: JOB2
     runs-on: ubuntu-latest
     steps:
       - name: Checking the hostname for runner
         run: hostname
+
       - name: Running multiple commands
         run: |
           echo "Hi I am Aung Thu Hein"
           echo "Current time is $(date)"
           sleep 20
+
   job3:
     name: JOB3
     needs: job1
     runs-on: windows-latest
     steps:
       - name: Job with single dependency
-        run: sleep 10
+        shell: pwsh
+        run: Start-Sleep -Seconds 10
+
       - name: Checking runner info
         shell: pwsh
-        run: get-computerinfo
+        run: Get-ComputerInfo
+
   job4:
     name: JOB4
-    needs: [job1,job2,job3]
+    needs: [job1, job2, job3]
     runs-on: macos-latest
     steps:
       - name: Job for multiple dependencies
         run: sleep 10
+
       - name: Checking runner info
         run: sw_vers
