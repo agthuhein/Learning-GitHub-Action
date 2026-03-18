@@ -1,2 +1,11 @@
 name: my-First-Workflow
 on: push
+jobs:
+  job1:
+    name: JOB1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Running Single Command in Job1
+        run: echo "Hi this is my first github workflow"
+      - name: Checking os relaease for github hosted runner
+        run: cat /etc/os-release
