@@ -2,6 +2,16 @@ name: my-First-Workflow
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  ENV_TYPE: DEV
+  APP_USER: aungthuhein
+  APP_PORT: 80
 
 jobs:
   job1:
@@ -13,101 +23,91 @@ jobs:
           pwd
           ls -ltr
           hostname
+
       - name: Step-2 - Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v4
+
       - name: Step-3
         run: |
-          echo `pwd` >> myartifact.txt
-          mkdir artifacts
-          echo `ls -ltr` >> artifacts/list.txt
-          echo `hostname` >> artifacts/hostname.txt
+          pwd > myartifact.txt
+          mkdir -p artifacts
+          ls -ltr > artifacts/list.txt
+          hostname > artifacts/hostname.txt
+
       - name: Upload single file
-        uses: actions/upload-artifact@v7.0.0
+        uses: actions/upload-artifact@v4
         with:
           name: single_file
           path: ./myartifact.txt
-      - name: Upload from directory
-        uses: actions/upload-artifact@v7.0.0
-        with:
-          name: directory_artifacts
-          path: artifacts/
-      - name: Upload from multiple paths
-        uses: actions/upload-artifact@v7.0.0
-        with:
-          name: multiple_paths
-          path: |
-            ./myartifact.txt
-            artifacts/
-      - name: Upload from multiple paths exclusion
-        uses: actions/upload-artifact@v7.0.0
-        with:
-          name: multiple_paths_with_exclusions
-          path: |
-            ./myartifact.txt
-            artifacts/
-            !**/hostname.txt
+
   job2:
     name: JOB2
     needs: job1
     runs-on: ubuntu-latest
     steps:
-      - name: Checking current ddirectory
+      - name: Checking current directory
         run: |
           pwd
           ls -ltr
+
       - name: Download single file artifact
-        uses: actions/download-artifact@v7.0.0
+        uses: actions/download-artifact@v4
         with:
           name: single_file
-      - name: Checking current directory post download
-        run: |
-          pwd
-          ls -ltr
-  job3:
-    name: JOB3
-    needs: job1
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checking current ddirectory
-        run: |
-          pwd
-          ls -ltr
-      - name: Download directory
-        uses: actions/download-artifact@v7.0.0
-        with:
-          name: directory_artifacts
+
       - name: Checking current directory post download
         run: |
           pwd
           ls -ltr
 
-  job4:
-    name: JOB4
-    needs: job1
+      - name: Step for PR demos
+        run: exit 0
+
+      - name: Referring Environment Variables
+        run: |
+          echo "[INFO] Running deployment for $ENV_TYPE with user $APP_USER"
+          echo "[INFO] Once deployed application is accessible on port $APP_PORT"
+
+      - name: Referring Repository Secret
+        run: |
+          echo "[INFO] Application password is ${{ secrets.APP_PASSWORD }}"
+
+  job3:
+    name: JOB3
     runs-on: ubuntu-latest
     steps:
-      - name: Creating custom folder for download
+      - name: Referring context or in-built variables
         run: |
-          mkdir -p single_file
-          mkdir -p download_directory
-      - name: Checking current ddirectory
+          echo "[INFO] Triggered by ${{ github.event_name }}."
+          echo "[INFO] New changes are added by ${{ github.actor }}."
+          echo "[INFO] Current step is running on ${{ runner.os }}."
+          echo "[INFO] Current JOB ID is ${{ job.check_run_id }}."
+
+  staging:
+    name: STAGE DEPLOYMENT
+    runs-on: ubuntu-latest
+    steps:
+      - name: Referring Environment Variables
         run: |
-          pwd
-          ls -ltr
-      - name: Download single file artifact
-        uses: actions/download-artifact@v7.0.0
-        with:
-          name: single_file
-          path: single_file/
-      - name: Download directory
-        uses: actions/download-artifact@v7.0.0
-        with:
-          name: directory_artifacts
-          path: download_directory
-      - name: Checking current directory post download
+          echo "[INFO] Running deployment on ${{ vars.HOST }} using ${{ vars.USER }}."
+      - name: Referring Environment Secrets
         run: |
-          pwd
-          echo "Checking Single File Directory"
-          ls -ltr single_file
-          echo "Checking Directory artifects"
-          ls -ltr download_directory
+          echo "[INFO] Password for ${{ vars.USER }} is ${{ secrets.PASSWORD }}."
+    environment:
+      name: STAGING
+    if: github.ref == 'refs/heads/dev'
+
+  production:
+    name: production DEPLOYMENT
+    runs-on: ubuntu-latest
+    steps:
+      - name: Referring Environment Variables
+        run: |
+          echo "[INFO] Running deployment on ${{ vars.HOST }} using ${{ vars.USER }}."
+
+      - name: Referring Environment Secrets
+        run: |
+          echo "[INFO] Password for ${{ vars.USER }} is ${{ secrets.PASSWORD }}."
+    environment:
+      name: PRODUCTION
+    if: github.ref == 'refs/heads/main'
