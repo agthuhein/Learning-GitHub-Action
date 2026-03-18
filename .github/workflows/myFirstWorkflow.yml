@@ -2,6 +2,10 @@ name: my-First-Workflow
 
 on:
   push:
+    branches:
+      - dev
+      - 'feature-*
+      - main
 
 jobs:
   job1:
@@ -26,26 +30,6 @@ jobs:
         with:
           name: single_file
           path: ./myartifact.txt
-      - name: Upload from directory
-        uses: actions/upload-artifact@v7.0.0
-        with:
-          name: directory_artifacts
-          path: artifacts/
-      - name: Upload from multiple paths
-        uses: actions/upload-artifact@v7.0.0
-        with:
-          name: multiple_paths
-          path: |
-            ./myartifact.txt
-            artifacts/
-      - name: Upload from multiple paths exclusion
-        uses: actions/upload-artifact@v7.0.0
-        with:
-          name: multiple_paths_with_exclusions
-          path: |
-            ./myartifact.txt
-            artifacts/
-            !**/hostname.txt
   job2:
     name: JOB2
     needs: job1
@@ -63,51 +47,3 @@ jobs:
         run: |
           pwd
           ls -ltr
-  job3:
-    name: JOB3
-    needs: job1
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checking current ddirectory
-        run: |
-          pwd
-          ls -ltr
-      - name: Download directory
-        uses: actions/download-artifact@v7.0.0
-        with:
-          name: directory_artifacts
-      - name: Checking current directory post download
-        run: |
-          pwd
-          ls -ltr
-
-  job4:
-    name: JOB4
-    needs: job1
-    runs-on: ubuntu-latest
-    steps:
-      - name: Creating custom folder for download
-        run: |
-          mkdir -p single_file
-          mkdir -p download_directory
-      - name: Checking current ddirectory
-        run: |
-          pwd
-          ls -ltr
-      - name: Download single file artifact
-        uses: actions/download-artifact@v7.0.0
-        with:
-          name: single_file
-          path: single_file/
-      - name: Download directory
-        uses: actions/download-artifact@v7.0.0
-        with:
-          name: directory_artifacts
-          path: download_directory
-      - name: Checking current directory post download
-        run: |
-          pwd
-          echo "Checking Single File Directory"
-          ls -ltr single_file
-          echo "Checking Directory artifects"
-          ls -ltr download_directory
