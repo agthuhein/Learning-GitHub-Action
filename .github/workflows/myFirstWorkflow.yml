@@ -1,7 +1,7 @@
 name: my-First-Workflow
 on:
   schedule:
-    - cron: "*5 * * * * "
+    - cron: "*/5 * * * *"
   workflow_dispatch:
   push:
   
@@ -25,7 +25,7 @@ jobs:
       - name: Running multiple commands
         run: |
           echo "Hi I am Aung Thu Hein"
-          echo "Current time is 'date'"
+          echo "Current time is $(date)"
           sleep 20
   job3:
     name: JOB3
