@@ -21,7 +21,7 @@ COPY requirement.txt .
 
 # Install dependencies (ensure gunicorn is included)
 RUN pip install --upgrade pip \
- && pip install --no-cache-dir -r requirements.txt \
+ && pip install --no-cache-dir -r requirement.txt \
  && pip install --no-cache-dir gunicorn
 
 # Copy only necessary application code (other files excluded via .dockerignore)
