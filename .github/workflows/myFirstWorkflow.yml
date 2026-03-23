@@ -135,3 +135,29 @@ jobs:
         run: |
           IMAGE_TAG="${{ needs.build.outputs.image_tags }}"
           docker image push ${{ secrets.DOCKERHUB_USERNAME}}/ath_app:$IMAGE_TAG
+  publish-ghcr:
+    name: Publish to git hub container registry
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download the image
+        uses: actions/download-artifact@v5.0.0
+        with:
+          name: ath_app_image
+          path: .
+      - name: Load Docker Image
+        run: docker load -i ath_app.tar
+      - name: Login to GHCR
+        uses: docker/login-action@v3 # docker login -u DOCKERHUB_USER -p DOCKER_PASSWORD
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor}}
+          password: ${{ secrets.GITHUB_TOKEN}} #GitHub automatically creates a GITHUB_TOKEN secret to use in your workflows. Pus to GHCR, create release,
+      - name: Tag Image
+        run: |
+          IMAGE_TAG="${{ needs.build.outputs.image_tags }}"
+          docker image tag ath_app:$IMAGE_TAG ghcr.io/${{ github.repository_owner}}/ath_app:$IMAGE_TAG
+      - name: Push Image
+        run: |
+          IMAGE_TAG="${{ needs.build.outputs.image_tags }}"
+          docker image push ghcr.io/${{ github.repository_owner}}/ath_app:$IMAGE_TAG
