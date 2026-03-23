@@ -102,6 +102,7 @@ jobs:
           file: ./Dockerfile
           push: false
           tags: ath_app:${{ steps.vars.outputs.IMAGE_TAGS }}
+          load: true
       - name: Save docker image
         run: docker save ath_app:${{ steps.vars.outputs.IMAGE_TAGS }} -o ath_app.tar
       - name: Upload docker image artifact
