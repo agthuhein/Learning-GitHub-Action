@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/*
 
 # Copy dependency list first for caching
-COPY requirements.txt .
+COPY requirement.txt .
 
 # Install dependencies (ensure gunicorn is included)
 RUN pip install --upgrade pip \
