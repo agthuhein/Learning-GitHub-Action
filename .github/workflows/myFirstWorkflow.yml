@@ -129,9 +129,9 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN}}
       - name: Tag Image
         run: |
-          IMAGE_TAG="${{ needs.build.outputs.image-tags }}"
+          IMAGE_TAG="${{ needs.build.outputs.image_tags }}"
           docker image tag ath_app:$IMAGE_TAG ${{ secrets.DOCKER_USERNAME}}/ath_app:$IMAGE_TAG
       - name: Push Image
         run: |
-          IMAGE_TAG="${{ needs.build.outputs.image-tags }}"
+          IMAGE_TAG="${{ needs.build.outputs.image_tags }}"
           docker image push ${{ secrets.DOCKER_USERNAME}}/ath_app:$IMAGE_TAG
