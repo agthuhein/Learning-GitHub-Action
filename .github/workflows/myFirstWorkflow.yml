@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: my-workflow-file
 
 on:
   push:
