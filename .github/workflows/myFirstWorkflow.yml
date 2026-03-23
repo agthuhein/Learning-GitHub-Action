@@ -130,8 +130,8 @@ jobs:
       - name: Tag Image
         run: |
           IMAGE_TAG="${{ needs.build.outputs.image_tags }}"
-          docker image tag ath_app:$IMAGE_TAG ${{ secrets.DOCKER_USERNAME}}/ath_app:$IMAGE_TAG
+          docker image tag ath_app:$IMAGE_TAG ${{ secrets.DOCKERHUB_USERNAME}}/ath_app:$IMAGE_TAG
       - name: Push Image
         run: |
           IMAGE_TAG="${{ needs.build.outputs.image_tags }}"
-          docker image push ${{ secrets.DOCKER_USERNAME}}/ath_app:$IMAGE_TAG
+          docker image push ${{ secrets.DOCKERHUB_USERNAME}}/ath_app:$IMAGE_TAG
