@@ -1,5 +1,5 @@
 name: CI Pipeline
-
+# To get a trigger on every push in this repo
 on:
   push:
     branches:
