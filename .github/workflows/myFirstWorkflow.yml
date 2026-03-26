@@ -28,6 +28,9 @@ jobs:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
   deploy-wth-kubectl:
+    environment: PRODUCTION
+    env:
+      NAMESPACE: ${{ vars.NAMESPACE}}
     needs: ci-pipeline-job
     runs-on: ubuntu-latest
     steps:
@@ -57,11 +60,13 @@ jobs:
           yq e ".spec.template.spec.containers[0].image = strenv(IMAGE)" -i manifests/deployment.yaml
           cat manifests/deployment.yaml
 
-      - name: Deploy to Kubernetes
+      - name: Create Namesapace if not exists
         run: |
-          kubectl apply -f manifests/deployment.yaml
-          kubectl apply -f manifests/service.yaml
-          echo "Waiting 10s for pods to start..."
-          sleep 10
-          kubectl get pods -o wide
-          kubectl get svc
+          kubectl get namespace $NAMESPACE || kubectl create namespace $NAMESPACE
+      - name: Deploy to Kubernetes Cluster
+        run: |
+          kubectl apply -f manifests/ -n $NAMESPACE
+      - name: verify deployment
+        run: |
+          kubectl rollout status deployment/athapp -n $NAMESPACE
+          kubectl get all -n $NAMESPACE
