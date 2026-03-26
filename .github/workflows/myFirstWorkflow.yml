@@ -55,7 +55,7 @@ jobs:
       - name: Update image in deployment YAML
         run: |
           IMAGE_TAGS="${{ github.run_id }}-${GITHUB_SHA::7}"
-          export IMAGE="ghcr.io/agthuhein/ath_app:${IMAGE_TAGS}"
+          export IMAGE="ghcr.io/agthuhein/athapp:${IMAGE_TAGS}"
           echo "Using image: $IMAGE"
           yq e ".spec.template.spec.containers[0].image = strenv(IMAGE)" -i manifests/deployment.yaml
           cat manifests/deployment.yaml
