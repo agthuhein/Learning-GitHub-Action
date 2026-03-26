@@ -28,6 +28,7 @@ jobs:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
   deploy-wth-kubectl:
+    if: github.ref == 'refs/heads/main'
     environment: PRODUCTION
     env:
       NAMESPACE: ${{ vars.NAMESPACE}}
