@@ -32,29 +32,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Install kubectl
-        run: |
-          ARCH=$(uname -m)
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
 
-          if [ "$ARCH" = "x86_64" ]; then
-            ARCH="amd64"
-          elif [ "$ARCH" = "aarch64" ]; then
-            ARCH="arm64"
-          else
-            echo "Unsupported architecture: $ARCH"
-            exit 1
-          fi
+      - name: Create Kubernetes cluster
+        uses: helm/kind-action@v1
 
-          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/${ARCH}/kubectl"
-
-          chmod +x kubectl
-          sudo mv kubectl /usr/local/bin/kubectl
-
-          kubectl version --client
-
-      - name: Configure Kubeconfig
-        run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
-          kubectl version
-          kubectl get nodes
+      - name: Verify cluster
+        run: kubectl get nodes
