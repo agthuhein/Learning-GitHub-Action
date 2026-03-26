@@ -15,7 +15,7 @@ jobs:
           lsb_release -a || cat /etc/os-release
           echo "Runner Name: ${{ runner.name }}"
           echo "Runner OS: ${{ runner.os }}"
-          sleep 60
+          sleep 90
   demo-2:
     name: Demo job 2
     runs-on: github-actions-scaleset-demo
@@ -27,4 +27,4 @@ jobs:
           lsb_release -a || cat /etc/os-release
           echo "Runner Name: ${{ runner.name }}"
           echo "Runner OS: ${{ runner.os }}"
-          sleep 60
+          sleep 90
