@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI Pipeline Demo
 # To get a trigger on every push in this repo
 on:
   push:
