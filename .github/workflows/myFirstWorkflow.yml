@@ -27,7 +27,7 @@ jobs:
 
   deploy-wth-kubectl:
     needs: ci-pipeline-job
-    runs-on: github-actions-scaleset-demo
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
