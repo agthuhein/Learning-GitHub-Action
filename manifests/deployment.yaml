@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: athapp
+  name: ath_app
   labels:
-    app: athapp
+    app: ath_app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: athapp
+      app: ath_app
   template:
     metadata:
       labels:
-        app: athapp
+        app: ath_app
     spec:
       containers:
-        - name: athapp
+        - name: ath_app
           image: ghcr.io/agthuhein/ath_app:23435361362-6fc9913
           ports:
             - containerPort: 8000
