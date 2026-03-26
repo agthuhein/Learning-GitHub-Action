@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: athapp
+  labels:
+    app: athapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: athapp
+  template:
+    metadata:
+      labels:
+        app: athapp
+    spec:
+      containers:
+        - name: athapp
+          image: ghcr.io/agthuhein/athapp:23435361362-6fc9913
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              memory: '256Mi'
+              cpu: '100m'
+            limits:
+              memory: '512Mi'
+              cpu: '500m'
