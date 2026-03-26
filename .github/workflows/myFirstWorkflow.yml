@@ -1,5 +1,5 @@
 name: CI Pipeline Demo
-# To get a trigger on every push in this repo
+
 on:
   push:
     branches:
@@ -7,11 +7,13 @@ on:
   pull_request:
     branches:
       - main
+
 permissions:
   actions: read
   security-events: write
   packages: write
   contents: read
+
 jobs:
   ci-pipeline-job:
     uses: agthuhein/reusable-workflows/.github/workflows/ci-pipeline.yml@main
@@ -21,9 +23,9 @@ jobs:
       run_build: true
       run_ghcr_publish: true
     secrets:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN}}
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME}}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN}}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
   deploy-wth-kubectl:
     needs: ci-pipeline-job
@@ -47,10 +49,19 @@ jobs:
           sudo chmod +x /usr/local/bin/yq
           yq --version
 
-      - name: update image name in deployment YAML
+      - name: Update image in deployment YAML
         run: |
-          IMAGE_TAGS="${{ github.run_id}}-${GITHUB_SHA::7}"
+          IMAGE_TAGS="${{ github.run_id }}-${GITHUB_SHA::7}"
           IMAGE="ghcr.io/agthuhein/athapp:${IMAGE_TAGS}"
-          export IMAGE="${{ inputs.IMAGE_NAME }}:${IMAGE_TAGS}"
-          yq e '.spec.template.spec.containers[0].image = strenv(IMAGE)' manifests/deployment.yaml -i
+          echo "Using image: $IMAGE"
+          yq e ".spec.template.spec.containers[0].image = strenv(IMAGE)" -i manifests/deployment.yaml
           cat manifests/deployment.yaml
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f manifests/deployment.yaml
+          kubectl apply -f manifests/service.yaml
+          echo "Waiting 10s for pods to start..."
+          sleep 10
+          kubectl get pods -o wide
+          kubectl get svc
